@@ -1,0 +1,647 @@
+---
+title: "Exercises"
+author: "Alyssa Allsop"
+date: "11/4/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(tidyverse)
+```
+
+mpg has 234 rows and 11 columns.
+
+```{r}
+ggplot(data = mpg) +
+  geom_point(mapping = aes(x = hwy, y = cyl))
+```
+
+
+```{r}
+ggplot(data = mpg) +
+  geom_point(mapping = aes(x = class, y = drv))
+```
+
+
+
+Exercise 3.3.1.3
+map a continuous variable to color, size, and shape.
+```{r}
+ggplot(data = mpg) +
+  geom_point(mapping = aes(x = displ, y = hwy, color = cyl))
+
+ggplot(data = mpg) +
+  geom_point(mapping = aes(x = displ, y = hwy, size = cyl))
+
+ggplot(data = mpg) +
+  geom_point(mapping = aes(x = displ, y = hwy, shape = cyl))
+
+
+```
+
+
+
+
+```{r}
+ggplot(data = mpg, mapping = aes(x = displ, y = hwy, color = drv)) + 
+  geom_point() + 
+  geom_smooth(se = FALSE)
+```
+
+
+3.6.1.5
+
+```{r}
+ggplot(data = mpg, mapping = aes(x = displ, y = hwy)) + 
+  geom_point() + 
+  geom_smooth()
+
+ggplot() + 
+  geom_point(data = mpg, mapping = aes(x = displ, y = hwy)) + 
+  geom_smooth(data = mpg, mapping = aes(x = displ, y = hwy))
+```
+
+3.1.6.6
+
+```{r}
+ggplot(data = mpg) +
+  geom_point(mapping = aes(x=displ, y = hwy), size = 5) +
+  geom_smooth(mapping = aes(x = displ, y = hwy), se = FALSE, size = 3)
+```
+
+```{r}
+ggplot(data = mpg) +
+  geom_point(mapping = aes(x = displ, y = hwy), size = 5) +
+  geom_smooth(mapping = aes(x = displ, y = hwy, group = drv), se = FALSE, size = 3)
+```
+
+
+```{r}
+ggplot(data = mpg) +
+  geom_point(mapping = aes(x = displ, y = hwy, color = drv), size = 5) +
+  geom_smooth(mapping = aes(x = displ, y = hwy, group = drv, color = drv), se = FALSE, size = 3)
+```
+
+
+```{r}
+ggplot(data = mpg) +
+  geom_point(mapping = aes(x = displ, y = hwy, color = drv), size = 5) +
+  geom_smooth(mapping = aes(x = displ, y = hwy), se = FALSE, size = 3)
+```
+
+
+```{r}
+ggplot(data = mpg) +
+  geom_point(mapping = aes(x = displ, y = hwy, color = drv), size = 5) +
+  geom_smooth(mapping = aes(x = displ, y = hwy, group = drv, linetype = drv), se = FALSE, size = 3)
+```
+
+```{r}
+ggplot(data = mpg) +
+  geom_point(mapping = aes(x = displ, y = hwy, fill = drv), color = "White", size = 5, shape = 21, stroke = 5)
+
+```
+
+
+3.8.1.1
+
+```{r}
+ggplot(data = mpg, mapping = aes(x = cty, y = hwy)) + 
+  geom_point()+
+  geom_jitter()
+```
+
+3.8.1.2
+"width" and "height" can be used as parameters to adjust the jitter.
+
+
+
+
+
+3.8.1.3
+
+```{r}
+ggplot(data = mpg, mapping = aes(x = cty, y = hwy)) + 
+  geom_point() + 
+  geom_count()
+```
+
+geom_count() makes the points bigger if there are multiple points on top of each other.
+
+
+
+3.8.1.4
+
+```{r}
+ggplot(data = mpg) +
+  geom_boxplot(mapping = aes(x = class, y = hwy))
+```
+
+The default position adjustment is "dodge2". The boxplots are side-by-side boxplots.
+
+3.9.1.1
+
+
+```{r}
+
+ggplot(data = mpg) +
+  geom_bar(mapping = aes(x = class, fill = model), width = 1, show.legend = FALSE) + 
+  coord_flip() +
+  coord_polar()
+```
+
+
+5.2.4.1
+```{r}
+library(tidyverse)
+library(nycflights13)
+#1 Had an arrival delay of two or more hours
+filter(flights, arr_delay >= 2)
+
+#2 Flew to Houston (IAH or HOU)
+filter(flights, dest == "IAH" | dest == "HOU")
+
+#3 Were operated by United, American, or Delta
+filter(flights, carrier == "DL" | carrier == "AA" | carrier == "UA")
+
+#4 Departed in summer (July, August, and September)
+filter(flights, month == 7 | month == 8 | month == 9)
+
+#5 Arrived more than two hours late, but didn’t leave late
+filter(flights, dep_delay == 0 & arr_delay > 2)
+
+#6 Were delayed by at least an hour, but made up over 30 minutes in flight
+made_up <- flights$dep_delay - flights$arr_delay
+filter(flights, dep_delay > 1 & (dep_delay - arr_delay) > 30)
+
+#7 Departed between midnight and 6am (inclusive)
+filter(flights, dep_time >= 000 & dep_time <= 600 )
+```
+
+5.3.1.2
+
+```{r}
+arrange(flights, desc(dep_delay))
+arrange(flights, dep_delay)
+```
+
+5.6.7.2
+
+```{r}
+not_cancelled %>% count(dest)
+
+not_cancelled %>% 
+  group_by(dest) %>%
+  summarise(total = n())
+```
+
+
+```{r}
+not_cancelled %>% count(tailnum, wt = distance)
+
+not_cancelled %>%
+  group_by(tailnum) %>%
+  summarise(total = sum(distance))
+```
+
+
+Look at the number of cancelled flights per day. Is there a pattern? Is the proportion of cancelled flights related to the average delay?
+```{r}
+flights %>% 
+  group_by(day) %>%
+  summarise(cancelled = sum(is.na(dep_delay)) + sum(is.na(arr_delay)))
+```
+
+
+7.3.4.2
+Explore the distribution of price. Do you discover anything unusual or surprising? (Hint: Carefully think about the binwidth and make sure you try a wide range of values.)
+
+```{r}
+ggplot(data = diamonds) +
+  geom_histogram(mapping = aes(x = price), binwidth = 50)
+```
+
+There is a surprising gap around $1000 where the count is either 0 or very low.
+
+7.5.1.1.2
+What variable in the diamonds dataset is most important for predicting the price of a diamond? How is that variable correlated with cut? Why does the combination of those two relationships lead to lower quality diamonds being more expensive?
+```{r}
+ggplot(data = diamonds, mapping = aes(x = carat, y = price)) +
+  geom_point() +
+  geom_smooth(se = FALSE)
+```
+I think that carat is the most important for predicting price.
+
+
+```{r}
+ggplot(data = diamonds, mapping = aes(x = carat, y = cut)) + 
+  geom_point() +
+  geom_jitter()
+
+ggplot(data = diamonds) +
+  geom_boxplot(mapping = aes(x = cut, y = carat))
+```
+
+For every cut there are many more diamonds with 0 to about 2 carats. Anything bigger than that doesn't have a whole lot of data points although fair has the most data points for larger carat diamonds. This helps explain why better quality diamonds are cheaper on average, it is because they tend to be smaller diamonds (fewer carats). The low quality cut diamonds (fair) tend to have bigger diamonds (more carats) making them more expensive.
+
+
+12.2.1.2
+Compute the rate for table2. You will need to perform four operations:
+Extract the number of TB cases per country per year.
+Extract the matching population per country per year.
+Divide cases by population, and multiply by 10000.
+Store back in the appropriate place.
+```{r}
+library(tidyverse)
+table2
+
+cases_only <- filter(table2, type == 'cases')
+
+cases <- cases_only %>%
+  group_by(country) %>%
+  count(year, wt = count)
+
+pop_only <- filter(table2, type == 'population')
+
+pop <- pop_only %>%
+  group_by(country) %>%
+  count(year, wt = count)
+
+cases$n / pop$n * 10000
+
+cases_only %>%
+  mutate(population = pop$n) %>%
+  mutate(rate = cases$n / pop$n * 10000)
+
+```
+
+
+12.3.3.4
+Tidy the simple tibble below. Do you need to make it wider or longer? What are the variables?
+
+```{r}
+preg <- tribble(
+  ~pregnant, ~male, ~female,
+  "yes",     NA,    10,
+  "no",      20,    12
+)
+
+preg
+
+tidy_preg <- preg %>%
+  pivot_longer(c(male,female), names_to = "gender", values_to = "count")
+
+tidy_preg
+```
+
+
+13.3.1.1
+Add a surrogate key to flights.
+```{r}
+library(nycflights13)
+key_flights <- flights %>%
+  mutate(surrogate_key = row_number())
+```
+
+13.4.6.2
+Add the location of the origin and destination (i.e. the lat and lon) to flights.
+```{r}
+airport_places <- airports %>%
+  select("faa", "lat", "lon")
+flights %>%
+  left_join(airport_places, c("dest" = "faa")) %>%
+  left_join(airport_places, c("origin" = "faa"))
+```
+
+
+13.5.1.2
+Filter flights to only show flights with planes that have flown at least 100 flights.
+```{r}
+num_flights <- flights %>%
+  filter(!is.na(tailnum)) %>%
+  count(tailnum, sort = TRUE)
+
+planes_100 <- filter(num_flights, n >= 100)
+
+flights %>%
+  semi_join(planes_100)
+```
+
+13.5.1.3
+Combine fueleconomy::vehicles and fueleconomy::common to find only the records for the most common models.
+```{r}
+library(fueleconomy)
+vehicles %>%
+  semi_join(common)
+```
+
+14.3.2.1.1
+
+```{r}
+x <- "$^$"
+x
+
+str_view(x, "\\$\\^\\$")
+```
+
+
+14.3.2.1.2
+start with y
+```{r}
+str_view(words, "^y", match = TRUE)
+```
+
+end with x
+```{r}
+str_view(words, "x$", match = TRUE)
+```
+
+Are exactly 3 letters long
+```{r}
+str_view(words, "^...$", match = TRUE)
+```
+
+Have 7 letters or more
+```{r}
+str_view(words, "^.......", match = TRUE)
+```
+
+```{r}
+str_view(c("aa11", "aaa", "aaa11"), "(.)\1\1", match = TRUE)
+```
+
+14.4.2.1.2
+From the Harvard sentences data, extract:
+The first word from each sentence.
+```{r}
+head(str_extract(sentences, "[A-Za-z]+"))
+```
+
+
+14.4.4.1.2
+Implement a simple version of str_to_lower() using replace_all().
+
+```{r}
+smaller_sentences <- sentences %>%
+  head(15)
+str_replace_all(smaller_sentences, c("A" = "a", "B" = "b", "C" = "c", "D" = "d", "E" = "e",
+                                     "F" = "f", "G" = "g", "H" = "h", "I" = "i", "J" = "j",
+                                     "K" = "k", "L" = "l", "M" = "m", "N" = "n", "O" = "o",
+                                     "P" = "p", "Q" = "q", "R" = "r", "S" = "s", "T" = "t",
+                                     "U" = "u", "V" = "v", "W" = "w", "X" = "x", "Y" = "y",
+                                     "Z" = "z"))
+```
+
+
+15.3.1.1
+Explore the distribution of rincome (reported income). What makes the default bar chart hard to understand? How could you improve the plot?
+```{r}
+ggplot(gss_cat) +
+  geom_bar(mapping = aes(rincome)) +
+  coord_flip()
+```
+
+The default bar chart has the income level labels overlapping thus making them impossible to read. Flipping the income levels to the y axis fixes this problem.
+
+
+
+
+15.3.1.2
+What is the most common relig in this survey? What’s the most common partyid?
+```{r}
+ggplot(gss_cat) +
+  geom_bar(mapping = aes(relig)) +
+  coord_flip()
+```
+
+Protestant is the most common religion.
+
+
+
+19.2.1.3
+Practice turning the following code snippets into functions. Think about what each function does. What would you call it? How many arguments does it need? Can you rewrite it to be more expressive or less duplicative?
+
+```{r}
+# mean(is.na(x))
+
+mean_na <- function(x){
+  mean(is.na(x))
+}
+mean_na(c(NA, 3, 4, 9, 9, NA))
+
+# x / sum(x, na.rm = TRUE)
+
+prop_func <- function(x) {
+  x / sum(x, na.rm = TRUE)
+}
+prop_func(c(30, 20, 10, NA, 0, NA, 20))
+
+
+# sd(x, na.rm = TRUE) / mean(x, na.rm = TRUE)
+
+coef_variation <- function(x) {
+  sd(x, na.rm = TRUE) / mean(x, na.rm = TRUE)
+} 
+coef_variation(c(3, 2, 9, 4, 13, 8, 3, 4, 5, 2))
+```
+
+19.2.1.4
+write your own functions to compute the variance and skewness of a numeric vector.
+```{r}
+computer_var <- function(x) {
+  n <- length(x)
+  xbar <- sum(x) / n
+  1 / (n - 1) * sum(x - xbar) ^ 2
+}
+
+compute_skew <- function(x) {
+  n <- length(x)
+  xbar <- sum(x) / n
+  (1 / (n - 2) * sum(x - xbar) ^ 3) / var(x) ^ (3/2)
+}
+```
+
+
+
+19.4.4.3
+Implement a fizzbuzz function. It takes a single number as input. If the number is divisible by three, it returns “fizz”. If it’s divisible by five it returns “buzz”. If it’s divisible by three and five, it returns “fizzbuzz”. Otherwise, it returns the number. Make sure you first write working code before you create the function.
+```{r}
+x <- 10
+
+
+
+fizzbuzz_func <- function(x){
+  if(x %% 3 == 0 && x %% 5 == 0){
+    "fizzbuzz"
+  } else if (x %% 5 == 0) {
+    "buzz"
+  } else if (x %% 3 == 0) {
+    "fizz"
+  } else {
+    x
+  }
+}
+
+```
+
+
+20.4.6.4
+Create functions that take a vector as input and returns:
+
+The last value. Should you use [ or [[?
+```{r}
+last_value <- function(x) {
+  n <- length(x)
+  x[[n]]
+}
+
+test_vec <- c(3, 2, 1, 4, 5)
+last_value(test_vec)
+```
+
+The elements at even numbered positions.
+
+```{r}
+
+even_positions <- function(x) {
+  even <- seq(2,length(x), by = 2)
+  x[even]
+}
+
+test_vec <- c(1:20)
+even_positions(test_vec)
+```
+
+Every element except the last value.
+
+```{r}
+all_but_last <- function(x) {
+  n <- length(x)
+  x[-n]
+}
+
+test_vec <- c(3, 5, 4, NA, 9, 10)
+all_but_last(test_vec)
+```
+
+Only even numbers (and no missing values).
+```{r}
+even_numbers <- function(x) {
+  x[x %% 2 == 0]
+}
+
+test_vec <- c(2, 4, 5, 6, 8, 9, 3)
+even_numbers(test_vec)
+```
+
+21.2.1.1
+Write for loops to:
+
+Compute the mean of every column in mtcars.
+```{r}
+output <- vector("double", 0)
+for(i in seq_along(mtcars)){
+  output[[i]] <- mean(mtcars[[i]]) #how does this know to select columns instead of rows?
+}
+
+output
+str(output)
+
+#why can't I do it this way?
+
+for(i in 1:ncol(mtcars)){
+  output[i] <- mean(mtcars[,i])
+}
+output
+str(output)
+```
+
+Determine the type of each column in nycflights13::flights.
+```{r}
+type_of_col <- vector("character", 0)
+for(i in seq_along(flights)){
+  type_of_col[[i]] <- typeof(flights[[i]])
+}
+type_of_col
+```
+
+Compute the number of unique values in each column of iris.
+```{r}
+unique_vals <- vector("integer", 0)
+for(i in seq_along(iris)){
+  unique_vals[[i]] <- n_distinct(iris[[i]])
+}
+names(unique_vals) <- names(iris)
+unique_vals
+```
+
+Generate 10 random normals from distributions with means of -10, 0, 10, and 100.
+```{r}
+n <- 10
+mu <- c(-10, 0, 10, 100)
+normals <- vector("list", length(mu))
+for(i in seq_along(normals)){
+  normals[[i]] <- rnorm(n, mean = mu[i])
+}
+normals
+```
+
+
+21.5.3.1
+Write code that uses one of the map functions to:
+
+Compute the mean of every column in mtcars.
+```{r}
+map_dbl(mtcars, mean)
+```
+
+Determine the type of each column in nycflights13::flights.
+```{r}
+map_chr(flights, typeof)
+```
+
+Compute the number of unique values in each column of iris.
+```{r}
+map_dbl(iris, n_distinct)
+```
+
+Generate 10 random normals from distributions with means of -10, 0, 10, and 100.
+```{r}
+n <- 10
+mu <- c(-10, 0, 10, 100)
+map(mu, ~rnorm(n = n, mean = mu))
+```
+
+21.5.3.5
+Rewrite map(x, function(df) lm(mpg ~ wt, data = df)) to eliminate the anonymous function.
+```{r}
+attach(mtcars)
+map(x, function(df) lm(mpg ~ wt, data = df))
+
+map(x,~lm(mpg ~ wt, data = .))
+```
+
+23.2.1.1
+One downside of the linear model is that it is sensitive to unusual values because the distance incorporates a squared term. Fit a linear model to the simulated data below, and visualise the results. Rerun a few times to generate different simulated datasets. What do you notice about the model?
+
+```{r}
+library(tidyverse)
+
+library(modelr)
+options(na.action = na.warn)
+
+sim1a <- tibble(
+  x = rep(1:10, each = 3),
+  y = x * 1.5 + 6 + rt(length(x), df = 2)
+)
+
+mod <- lm(y ~ x, sim1a)
+
+ggplot(data = sim1a, aes(x, y)) +
+  geom_point() +
+  geom_abline(slope = mod$coefficients[2], intercept = mod$coefficients[1])
+```
